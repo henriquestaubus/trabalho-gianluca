@@ -38,6 +38,11 @@ decoder_ascii_abnt2 decoder (
 // ---------------- DOUBLE LETTER CASE ----------------
 logic [7:0] ascii_out;
 always_ff @( posedge clk, posedge rst ) begin
+  if(rst) begin
+    flag <= 1'b0;
+    ascii_out <= 8'h00;
+
+  end else begin
   if ( scancode != 8'hf0 ) begin
       if ( send ) begin
           if ( !flag ) begin
@@ -47,16 +52,17 @@ always_ff @( posedge clk, posedge rst ) begin
           end
       end
   end else begin
-      lag <= 1'b1;
+      flag <= 1'b1;
   end
+end
 end
 
 
 // ---------------- CLK DIVIDER ----------------
 logic [12:0] clk_divider;
 
-always_ff @( posedge clk, negedge rst_n ) begin
-  if ( !rst_n ) begin
+always_ff @( posedge clk, negedge rst) begin
+  if ( rst ) begin
     clk_divider <= '0;
     clk_9600    <= '0;
   end else begin
@@ -68,7 +74,6 @@ always_ff @( posedge clk, negedge rst_n ) begin
     end
   end
 end
-
 
 
 // ---------------- TX_DATA ----------------
